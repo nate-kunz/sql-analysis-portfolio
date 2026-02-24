@@ -1,0 +1,30 @@
+-- ============================================
+-- 11) EXPORTS
+-- Exporting Orders table to a CSV file
+-- ============================================
+
+mysql> SELECT *
+-> FROM Orders
+-> INTO OUTFILE '/home/codio/workspace/QuantigrationUpdatesOrders.csv'
+-> FIELDS TERMINATED BY ','
+-> ENCLOSED BY '\"'
+-> LINES TERMINATED BY '\r\n';
+
+-- ============================================
+-- 12) ANALYTICS QUERIES
+-- Aggregate analysis of returns by state and product type
+-- ============================================
+
+mysql> SELECT State, COUNT (RMA. RMAID) AS ReturnCount
+-> FROM Collaborator
+-> JOIN Orders ON Collaborator.CollaboratorID = Orders.CollaboratorID
+-> JOIN RMA ON Orders.OrderID = RMA.OrderID
+-> GROUP BY Collaborator.State
+-> ORDER BY ReturnCount DESC;
+
+mysql> SELECT Orders.Description AS ProductType,
+-> (COUNT(RMA.RMAID) / COUNT (Orders.OrderID)) * 100 AS ReturnPercentage
+-> FROM Orders
+-> LEFT JOIN RMA ON Orders.OrderID = RMA. OrderID
+-> GROUP BY Orders.Description
+-> ORDER BY ReturnPercentage DESC;
