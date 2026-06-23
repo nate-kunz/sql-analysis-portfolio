@@ -1,0 +1,84 @@
+```sql
+-- classicmodels relationship and cardinality joins.
+
+select firstName, lastName, jobTitle, offices.city
+from employees inner join offices on employees.officeCode = offices.officeCode
+where state = 'CA';
+
+SELECT firstName, lastName, jobTitle, offices.city
+FROM employees INNER JOIN offices ON employees.officeCode = offices.officeCode
+WHERE state = 'NY';
+
+SELECT customers.*, employees.firstName AS salesRepFirstName, employees.lastName AS salesRepLastName
+FROM customers INNER JOIN employees ON customers.salesRepEmployeeNumber = employees.employeeNumber
+WHERE employees.employeeNumber = 1504;
+
+SELECT customers.*, employees.firstName AS salesRepFirstName, employees.lastName AS salesRepLastName
+FROM customers INNER JOIN employees ON customers.salesRepEmployeeNumber = employees.employeeNumber
+WHERE customers.state = 'MA';
+```
+
+```sql
+-- Customer, Order, and RMA join examples.
+
+SELECT COUNT(*) AS OrderCount
+FROM Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+WHERE Customers.City = 'Framingham' AND (Customers.State = 'MA' OR Customers.State = 'Massachusetts');
+
+SELECT Orders.SKU, COUNT(RMA.RMAID) AS ReturnCount
+FROM Customers
+JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+JOIN RMA ON Orders.OrderID = RMA.OrderID
+WHERE Customers.State IS NOT NULL
+GROUP BY Orders.SKU
+ORDER BY ReturnCount DESC
+LIMIT 3;
+
+SELECT Orders.SKU, COUNT(RMA.RMAID) AS ReturnCount
+FROM Customers
+JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+JOIN RMA ON Orders.OrderID = RMA.OrderID
+WHERE Customers.State IN ('WA', 'Washington', 'OR', 'Oregon', 'ID', 'Idaho', 'MT', 'Montana')
+GROUP BY Orders.SKU
+ORDER BY ReturnCount DESC
+LIMIT 3;
+
+SELECT State, COUNT(RMA.RMAID) AS ReturnCount
+FROM Collaborator
+JOIN Orders ON Collaborator.CollaboratorID = Orders.CollaboratorID
+JOIN RMA ON Orders.OrderID = RMA.OrderID
+GROUP BY Collaborator.State
+ORDER BY ReturnCount DESC;
+
+SELECT Orders.Description AS ProductType, (COUNT(RMA.RMAID) / COUNT(Orders.OrderID)) * 100 AS ReturnPercentage
+FROM Orders LEFT JOIN RMA ON Orders.OrderID = RMA.OrderID
+GROUP BY Orders.Description
+ORDER BY ReturnPercentage DESC;
+```
+
+```sql
+-- Employee and Department join examples.
+
+SELECT First_Name, Last_Name, Department.Department_Name
+FROM Employee INNER JOIN Department ON Employee.Department_ID = Department.Department_ID
+WHERE Employee.Department_ID = 1;
+
+SELECT First_Name, Last_Name, Department.Department_Name
+FROM Employee INNER JOIN Department ON Employee.Department_ID = Department.Department_ID
+WHERE Employee.Department_ID = 2;
+
+SELECT First_Name, Last_Name, Department.Department_Name
+FROM Employee INNER JOIN Department ON Employee.Department_ID = Department.Department_ID
+WHERE Employee.Department_ID = 3;
+
+SELECT First_Name, Last_Name, Department.Department_Name
+FROM Employee INNER JOIN Department ON Employee.Department_ID = Department.Department_ID
+WHERE Employee.Department_ID = 4;
+
+select First_Name, Last_Name, Department.Department_Name
+from Employee inner join Department on Employee.Department_ID = Department.Department_ID
+where Employee.Department_ID = 3 OR Employee.Department_ID = 2
+into outfile'/home/codio/workspace/HRandIS-Employees.csv' FIELDS TERMINATED BY',' LINES TERMINATED BY '\r\n';
+```
+
